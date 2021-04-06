@@ -1,5 +1,6 @@
 import sqlite3 as sq
 import datetime as dt
+import json
 
 conn = sq.connect("ATM.db3")
 cursor = conn.cursor()
@@ -34,102 +35,141 @@ while True:
                 if pw == ac_pin:
                     print("Successful Login.")
                     if ac_type == "Client":
-                        select = input(""
-                                            + "+-----------------------+\n"
-                                            + "|      command menu     |\n"
-                                            + "+-----------------------+\n"
-                                            + "|1 --> Withdraw         |\n"
-                                            + "|2 --> Deposit          |\n"
-                                            + "|3 --> Transfer         |\n"
-                                            + "|4 --> Check Balance    |\n"
-                                            + "|5 --> List transactions|\n"
-                                            + "|6 --> Finish           |\n"
-                                            + "+-----------------------+\n")
-                        if int(select) == 6:
-                            print("Exit")
-                            break
-                        elif int(select) == 1:
-                            print("Amount to be withdrawed:")
-                            print("-----------------------")
-                            amount = str(input(""))
-                            balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
-                            for b in balance:
-                                if b[0] < int(amount):
-                                    print("You do not have enough amount. Please try again.")
-                                    break
-                            else:
+                        while True:
+                            select = input(""
+                                                + "+-----------------------+\n"
+                                                + "|      command menu     |\n"
+                                                + "+-----------------------+\n"
+                                                + "|1 --> Withdraw         |\n"
+                                                + "|2 --> Deposit          |\n"
+                                                + "|3 --> Transfer         |\n"
+                                                + "|4 --> Check Balance    |\n"
+                                                + "|5 --> List transactions|\n"
+                                                + "|6 --> Finish           |\n"
+                                                + "+-----------------------+\n")
+                            if int(select) == 6:
+                                print("Exit")
+                                break
+                            elif int(select) == 1:
+                                print("Amount to be withdrawed:")
+                                print("-----------------------")
+                                amount = str(input(""))
+                                balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
+                                for b in balance:
+                                    if b[0] < int(amount):
+                                        print("You do not have enough amount. Please try again.")
+                                        input("Press enter to continue.")
+                                else:
+                                    conn.execute("update account set balance = balance - " + amount + " where id = \'" + ac_id +"\'")
+                                    conn.commit()
+                                    print("Your Balance:")
+                                    print("-------------")
+                                    balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
+                                    for b in balance:
+                                        print(b[0])
+                                input("Press enter to continue.")
+                            elif int(select) == 2:
+                                print("Amount to be deposited:")
+                                print("-----------------------")
+                                amount = str(input(""))
+                                if int(amount) < 0:
+                                    print("Please enter the right amount.")
+                                else:
+                                    conn.execute("update account set balance = balance + " + amount + " where id = \'" + ac_id +"\'")
+                                    conn.commit()
+                                    print("Your Balance:")
+                                    print("-------------")
+                                    balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
+                                    for b in balance:
+                                        print(b[0])
+                                input("Press enter to continue.")
+                            
+                            elif int(select) == 3:
+                                print("Payee ID:")
+                                print("---------")
+                                payee_id = str(input(""))
+                                print("Amount to be transferred:")
+                                print("-------------------------")  
+                                amount = str(input(""))                          
+                                conn.execute("update account set balance = balance + " + amount + " where id = \'" + payee_id +"\'")
                                 conn.execute("update account set balance = balance - " + amount + " where id = \'" + ac_id +"\'")
                                 conn.commit()
-                                print("Your Balance:")
-                                print("-------------")
+                                print("Your Remaining Balance:")
+                                print("-----------------------")
                                 balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
                                 for b in balance:
                                     print(b[0])
-                            break
-                        elif int(select) == 2:
-                            print("Amount to be deposited:")
-                            print("-----------------------")
-                            amount = str(input(""))
-                            if int(amount) < 0:
-                                print("Please enter the right amount.")
-                            else:
-                                conn.execute("update account set balance = balance + " + amount + " where id = \'" + ac_id +"\'")
-                                conn.commit()
-                                print("Your Balance:")
-                                print("-------------")
-                                balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
-                                for b in balance:
-                                    print(b[0])
-                            break
-                        
-                        elif int(select) == 3:
-                            print("Payee ID:")
-                            print("---------")
-                            payee_id = str(input(""))
-                            print("Amount to be transferred:")
-                            print("-------------------------")  
-                            amount = str(input(""))                          
-                            conn.execute("update account set balance = balance + " + amount + " where id = \'" + payee_id +"\'")
-                            conn.execute("update account set balance = balance - " + amount + " where id = \'" + ac_id +"\'")
-                            conn.commit()
-                            print("Your Remaining Balance:")
-                            print("-----------------------")
-                            balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
-                            for b in balance:
-                                print(b[0])
+                                    input("Press enter to continue.")
 
-                        elif int(select) == 4:
-                            print("Your Balance:")
-                            print("-------------")                            
-                            print(ac_balance)
+                            elif int(select) == 4:
+                                print("Your Balance:")
+                                print("-------------")                            
+                                print(ac_balance)
+                                input("Press enter to continue.")
                         break
                     if ac_type == "Admin":
-                        select = input(""
-                                            + "+-----------------------+\n"
-                                            + "|   Admin command menu  |\n"
-                                            + "+-----------------------+\n"
-                                            + "|1 --> Add account      |\n"
-                                            + "|2 --> Delete account   |\n"
-                                            + "|3 --> Show account list|\n"
-                                            + "|4 --> Dump into a flie |\n"
-                                            + "|5 --> Finish           |\n"
-                                            + "+-----------------------+\n")
-                        if int(select) == 5:
-                            print("Exit")
-                            break
-                        elif int(select) == 3:
-                            cursor.execute("select id, name, balance, status from account")
-                            ac_list = cursor.fetchall()
-                            print("(ID, NAME, BALANCE, STATUS)")
-                            for ac in ac_list:
-                                print(ac)
+                        while True:
+                            select = input(""
+                                                + "+-----------------------+\n"
+                                                + "|   Admin command menu  |\n"
+                                                + "+-----------------------+\n"
+                                                + "|1 --> Add account      |\n"
+                                                + "|2 --> Delete account   |\n"
+                                                + "|3 --> Show account list|\n"
+                                                + "|4 --> Dump into a flie |\n"
+                                                + "|5 --> Finish           |\n"
+                                                + "+-----------------------+\n")
+                            if int(select) == 5:
+                                print("Exit")
+                                break
+                            elif int(select) == 1:
+                                print("Enter new account id:")
+                                print("---------------------")
+                                add_id = str(input(""))
+                                print("Enter username for the new account:")
+                                print("-----------------------------------")
+                                add_name = str(input(""))
+                                print("Enter PIN for the new account:")
+                                print("------------------------------")
+                                add_pin = str(input(""))
+                                print("'Client' or 'Admin'?")
+                                print("------------------------------")
+                                add_type = str(input(""))
+                                conn.execute("insert into account (id, name, pin, type) values (\'" + add_id + "\', \'" + add_name + "\', \'" + add_pin + "\', \'" + add_type + "\')")
+                                conn.commit()
+                                print("Success!")
+                                input("Press enter to continue.")
+                            elif int(select) == 2:
+                                print("Account id to be deleted:")
+                                print("---------------------")
+                                del_id = str(input(""))
+                                conn.execute("delete from account where id = \'" + del_id +"\'")
+                                conn.commit()
+                                print("Success!")
+                                input("Press enter to continue.")
+                            elif int(select) == 3:
+                                cursor.execute("select id, name, balance, status from account")
+                                ac_list = cursor.fetchall()
+                                print("(ID, NAME, BALANCE, STATUS)")
+                                for ac in ac_list:
+                                    print(ac)
+                                input("Press enter to continue.")
+                            elif int(select) == 4:
+                                cursor.execute("select id, name, balance, status from account")
+                                ac_list = cursor.fetchall()
+                                print("Enter the account list filename (.json or .txt):")
+                                print("------------------------------------------------")
+                                filename = str(input(""))
+                                with open(filename, 'w') as f: 
+                                    json.dump(ac_list, f)
+                                    print("Success!")
+                                input("Press enter to continue.")
                         break
-                        
                 else:
                     print("This account does not exist or PIN was wrong. Please check and try again.")
                     break
         conn.close()
-        break
+    break
 
 
 
@@ -137,7 +177,7 @@ while True:
 
         
 
-        (""
-            + "+-----------------------+----------+---------------------+\n"
-            + "|       Datetime        |   Type   |        Amount       |\n"
-            + "+-----------------------+----------+---------------------+\n")
+        # (""
+        #     + "+-----------------------+----------+---------------------+\n"
+        #     + "|       Datetime        |   Type   |        Amount       |\n"
+        #     + "+-----------------------+----------+---------------------+\n")
