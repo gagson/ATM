@@ -1,12 +1,9 @@
 import sqlite3 as sq
-import datetime as dt
 import json
 
 conn = sq.connect("ATM.db3")
 cursor = conn.cursor()
 
-count = 0
-# while loop checks existance of the enterd username
 while True:
     exit = input("+------------------------------------------------+\n"
                 + "| ATM-Manager Simulator using Python and SQLite  |\n"
@@ -30,7 +27,6 @@ while True:
             ac_status = row[5]
 
             if id == ac_id:
-                print(ac_pin)
                 pw = str(input("Type your PIN:\n"))
                 if pw == ac_pin:
                     print("Successful Login.")
@@ -161,6 +157,7 @@ while True:
                                 del_id = str(input(""))
                                 conn.execute("delete from account where id = \'" + del_id +"\'")
                                 conn.commit()
+                                print("A Client account cannot be deleted. It will be changed into Disabled account.")
                                 print("Success!")
                                 input("Press enter to continue.")
                             elif int(select) == 3:
@@ -195,14 +192,3 @@ while True:
                     break
         conn.close()
     break
-
-
-
-
-
-        
-
-        # (""
-        #     + "+-----------------------+----------+---------------------+\n"
-        #     + "|       Datetime        |   Type   |        Amount       |\n"
-        #     + "+-----------------------+----------+---------------------+\n")
