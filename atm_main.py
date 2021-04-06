@@ -33,16 +33,8 @@ while True:
                 pw = str(input("Type your PIN:\n"))
                 if pw == ac_pin:
                     print("Successful Login.")
-                    break
-                else:
-                    print("This account does not exist or PIN was wrong. Please check and try again.")
-                    break
-
-
-
-
-
-        (""
+                    if ac_type == "Client":
+                        print(""
                 + "+-----------------------+\n"
                 + "|      command menu     |\n"
                 + "+-----------------------+\n"
@@ -53,6 +45,17 @@ while True:
                 + "|5 --> List transactions|\n"
                 + "|6 --> Finish           |\n"
                 + "+-----------------------+\n")
+                        break
+                else:
+                    print("This account does not exist or PIN was wrong. Please check and try again.")
+                    break
+        break
+
+
+
+
+
+        
 
         (""
             + "+-----------------------+----------+---------------------+\n"
