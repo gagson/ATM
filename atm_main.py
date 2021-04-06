@@ -48,17 +48,55 @@ while True:
                         if int(select) == 6:
                             print("Exit")
                             break
+                        elif int(select) == 1:
+                            print("Amount to be withdrawed:")
+                            print("-----------------------")
+                            amount = str(input(""))
+                            balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
+                            for b in balance:
+                                if b[0] < int(amount):
+                                    print("You do not have enough amount. Please try again.")
+                                    break
+                            else:
+                                conn.execute("update account set balance = balance - " + amount + " where id = \'" + ac_id +"\'")
+                                conn.commit()
+                                print("Your Balance:")
+                                print("-------------")
+                                balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
+                                for b in balance:
+                                    print(b[0])
+                            break
                         elif int(select) == 2:
                             print("Amount to be deposited:")
                             print("-----------------------")
                             amount = str(input(""))
-                            conn.execute("update account set balance = balance + " + amount + " where id = \'" + ac_id +"\'")
-                            conn.commit()
-                            print("Your Balance:")
-                            print("-------------")
-                            cursor.execute("select balance from account where id = \'" + ac_id +"\'")
-                            print(cursor.fetchone())
+                            if int(amount) < 0:
+                                print("Please enter the right amount.")
+                            else:
+                                conn.execute("update account set balance = balance + " + amount + " where id = \'" + ac_id +"\'")
+                                conn.commit()
+                                print("Your Balance:")
+                                print("-------------")
+                                balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
+                                for b in balance:
+                                    print(b[0])
                             break
+                        
+                        elif int(select) == 3:
+                            print("Payee ID:")
+                            print("---------")
+                            payee_id = str(input(""))
+                            print("Amount to be transferred:")
+                            print("-------------------------")  
+                            amount = str(input(""))                          
+                            conn.execute("update account set balance = balance + " + amount + " where id = \'" + payee_id +"\'")
+                            conn.execute("update account set balance = balance - " + amount + " where id = \'" + ac_id +"\'")
+                            conn.commit()
+                            print("Your Remaining Balance:")
+                            print("-----------------------")
+                            balance = cursor.execute("select balance from account where id = \'" + ac_id +"\'")
+                            for b in balance:
+                                print(b[0])
 
                         elif int(select) == 4:
                             print("Your Balance:")
